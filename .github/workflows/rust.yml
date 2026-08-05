@@ -33,3 +33,25 @@ jobs:
 
       - name: Release Tests
         run: cargo test --release --verbose
+
+  riscv64:
+    runs-on: ubuntu-latest
+
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Install RISC-V toolchain
+        run: |
+          rustup target add riscv64gc-unknown-linux-gnu
+          sudo apt-get update
+          sudo apt-get install -y gcc-riscv64-linux-gnu qemu-user
+
+      - name: Debug Tests (riscv64)
+        run: |
+          CARGO_TARGET_RISCV64GC_UNKNOWN_LINUX_GNU_LINKER=riscv64-linux-gnu-gcc \
+            cargo test --target riscv64gc-unknown-linux-gnu --verbose
+
+      - name: Release Tests (riscv64)
+        run: |
+          CARGO_TARGET_RISCV64GC_UNKNOWN_LINUX_GNU_LINKER=riscv64-linux-gnu-gcc \
+            cargo test --release --target riscv64gc-unknown-linux-gnu --verbose

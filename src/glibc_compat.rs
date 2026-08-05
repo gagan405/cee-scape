@@ -1,12 +1,16 @@
 use core::marker::PhantomData;
 
 // glibc `__jmp_buf` is architecture-specific (see e.g. sysdeps/*/bits/setjmp.h).
-// Linux aarch64 uses `unsigned long long __jmp_buf[22]`; x86_64 uses `long long[8]`.
-// This module is only used as `struct_defs` on Linux (`lib.rs`); other OSes still
-// compile it with a placeholder length.
+// Linux aarch64 uses `unsigned long long __jmp_buf[22]`; x86_64 uses `long long[8]`;
+// riscv64 uses 14 u64 slots (pc + integer regs + sp) plus FP regs when `-mabi=lp64d`.
 #[cfg(all(target_os = "linux", target_arch = "aarch64"))]
 const JMP_BUF_U64_LEN: usize = 22;
-#[cfg(all(target_os = "linux", not(target_arch = "aarch64")))]
+#[cfg(all(target_os = "linux", target_arch = "riscv64"))]
+const JMP_BUF_U64_LEN: usize = 14 + crate::riscv64::floating_point_registers();
+#[cfg(all(
+    target_os = "linux",
+    not(any(target_arch = "aarch64", target_arch = "riscv64"))
+))]
 const JMP_BUF_U64_LEN: usize = 8;
 #[cfg(not(target_os = "linux"))]
 const JMP_BUF_U64_LEN: usize = 8;
