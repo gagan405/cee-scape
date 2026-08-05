@@ -8,6 +8,7 @@ homepage = "https://github.com/gagan405/jmp-scape"
 documentation = "https://docs.rs/jmp-scape/"
 repository = "https://github.com/gagan405/jmp-scape"
 readme = "README.md"
+build = "build/main.rs"
 keywords = ["setjmp", "longjmp", "ffi", "c", "signal"]
 categories = ["external-ffi-bindings", "no-std"]
 
